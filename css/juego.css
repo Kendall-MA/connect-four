@@ -1,0 +1,33 @@
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+section {
+    width: 25%;
+}
+
+table {
+    height: 25rem;
+}
+
+p {
+    display: inline;
+    margin-left: 1rem;
+    margin-right: 1.5rem;
+}
+
+.ficha {
+    pointer-events: none;
+}
+
+.fa-long-arrow-alt-down {
+    color: lightseagreen;
+}
+
+.hide {
+    visibility: hidden;
+}
