@@ -36,6 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['col1']) || isset($_POS
     $tablero = isset($_POST['tablero']) ? json_decode($_POST['tablero']) : [];
     $i = 5;
 
+
     // Obtener el nombre de cual columna fue la que acciono el post
     $keys = array_keys($_POST);
     $nombre_col = $keys[1];
@@ -48,10 +49,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['col1']) || isset($_POS
         jugar($tablero, $i, $num_col, 0);
     }
 
-    // revisarGanador($tablero);
+    // Revisar si ganó el jugador
+    revisarGanador($tablero, 0);
 
     // Maquina
     movimientoMaquina($tablero, $i);
+
+    // Revisar si ganó la máquina
+    revisarGanador($tablero, 1);
 }
 
 function jugar(&$tablero, $fila, $columna, $ficha) {
@@ -77,9 +82,58 @@ function movimientoMaquina(&$tablero, $fila) {
     }
 }
 
-function revisarGanador($tablero) {
-    echo "<script>alert('Usted ganó la partida!')</script>";
-    echo "<script>alert('La máquina ganó la partida')</script>";
+function revisarGanador($tablero, $ficha) {
+    $jugadores = array("El jugador", "La máquina");
+    $ganador = false;
+    // Se va a revisar el tablero desde la esquina inferior izquierda hasta
+    // la esquina superior derecha
+    for ($fila = 5; $fila >= 0; $fila--) {
+        for ($col = 0; $col < 7; $col++) {
+            if ($tablero[$fila][$col] == $ficha) { // Si es la ficha a revisar, se revisa
+                // Las lineas verticales y diagonales se revisan solo si la fila es mayor a 2
+                if ($fila > 2) { 
+                    // Se revisan diagonales
+                    if ($col <= 3) { // Se revisan diagonales hacia la derecha
+                        if ($tablero[$fila - 1][$col + 1] == $ficha && $tablero[$fila - 2][$col + 2] == $ficha && $tablero[$fila - 3][$col + 3] == $ficha) {
+                            $ganador = true;
+                            break;
+                        }
+                    }    
+                    if ($col >= 4) { // Se revisan diagonales a la izquierda
+                        if ($tablero[$fila - 1][$col - 1] == $ficha && $tablero[$fila - 2][$col - 2] == $ficha && $tablero[$fila - 3][$col - 3] == $ficha) {
+                            $ganador = true;
+                            break;
+                        }
+                    }
+
+                    // Se revisan las verticales
+                    if ($tablero[$fila - 1][$col] == $ficha && $tablero[$fila - 2][$col] == $ficha && $tablero[$fila - 3][$col] == $ficha) {
+                        $ganador = true;
+                        break;
+                    }
+                }
+                // Las lineas horizontales siempre se revisan
+                if ($col <= 3) { // Se revisan horizontales a la derecha
+                    if ($tablero[$fila][$col + 1] == $ficha &&  $tablero[$fila][$col + 2] == $ficha && $tablero[$fila][$col + 3] == $ficha) {
+                        $ganador = true;
+                        break;
+                    }
+                }
+    
+                if ($col >= 3) { // Se revisan horizontales a la izquierda
+                    if ($tablero[$fila][$col - 1] == $ficha &&  $tablero[$fila][$col - 2] == $ficha && $tablero[$fila][$col - 3] == $ficha) {
+                        $ganador = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    if ($ganador) {
+        $nombre = $jugadores[$ficha];
+        echo "<script>alert('".$nombre." ganó la partida!')</script>";
+    }
 }
 ?>
 
