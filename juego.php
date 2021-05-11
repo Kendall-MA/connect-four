@@ -66,11 +66,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['col1']) || isset($_POS
 }
 
 function jugar(&$tablero, $fila, $columna, $ficha) {
-    while ($tablero[$fila][$columna] != 3 && $fila >= 0) {
+    while ($fila >= 0) {
+        if ($tablero[$fila][$columna] == 3) {
+            break;
+        }
         $fila--;
     }
-    if ($tablero[$fila][$columna] == 3 && $fila > -1) {
-        $tablero[$fila][$columna] = $ficha;
+    if ($fila != -1) {
+        if ($tablero[$fila][$columna] == 3 && $fila > -1) {
+            $tablero[$fila][$columna] = $ficha;
+        }
     }
 }
 
