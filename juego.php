@@ -23,7 +23,7 @@ function rowData($ficha, $id) {
     }
 
     if ($ficha == 0) {
-        $row_data .= "🔵";
+        $row_data .= "🟡";
     } 
     else if ($ficha == 1) {
         $row_data .= "🔴";
@@ -109,19 +109,20 @@ function revisarGanador($tablero) {
         <!-- Javascript -->
     </head>
     <body>
+    <b>CONNECT 4</b>
         <section>
             <!-- 6 filas, 7 columnas -->
             <form method="POST" action="juego.php">
                 <input name="tablero" type="hidden" value="<?php echo json_encode($tablero)?>">
                 <table class="table table-bordered">
                     <tr class="headers">
-                        <th><button name="col1"><i class="fas fa-long-arrow-alt-down"></i></button></th>
-                        <th><button name="col2"><i class="fas fa-long-arrow-alt-down"></i></button></th>
-                        <th><button name="col3"><i class="fas fa-long-arrow-alt-down"></i></button></th>
-                        <th><button name="col4"><i class="fas fa-long-arrow-alt-down"></i></button></th>
-                        <th><button name="col5"><i class="fas fa-long-arrow-alt-down"></i></button></th>
-                        <th><button name="col6"><i class="fas fa-long-arrow-alt-down"></i></button></th>
-                        <th><button name="col7"><i class="fas fa-long-arrow-alt-down"></i></button></th>
+                        <th><button class="button-arrow" name="col1">↓</button></th>
+                        <th><button class="button-arrow" name="col2">↓</button></th>
+                        <th><button class="button-arrow" name="col3">↓</button></th>
+                        <th><button class="button-arrow" name="col4">↓</button></th>
+                        <th><button class="button-arrow" name="col5">↓</button></th>
+                        <th><button class="button-arrow" name="col6">↓</button></th>
+                        <th><button class="button-arrow" name="col7">↓</button></th>
                     </tr>
                     <?php $count = 1; foreach($tablero as $fila):?>
                     <tr>
