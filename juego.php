@@ -11,6 +11,8 @@ $tablero = [
     [3, 3, 3, 3, 3, 3, 3]
 ];
 
+$hayGanador = "false";
+
 function rowData($ficha, $id) {
 
     $nombre = "fila_" . $id;
@@ -35,28 +37,32 @@ function rowData($ficha, $id) {
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['col1']) || isset($_POST['col2']) || isset($_POST['col3']) || isset($_POST['col4']) || isset($_POST['col5']) || isset($_POST['col6']) || isset($_POST['col7'])) {
     $tablero = isset($_POST['tablero']) ? json_decode($_POST['tablero']) : [];
     $i = 5;
-
+    $hayGanador = isset($_POST['estado']) ? $_POST['estado'] : "";
 
     // Obtener el nombre de cual columna fue la que acciono el post
     $keys = array_keys($_POST);
-    $nombre_col = $keys[1];
+    $nombre_col = $keys[2];
 
     // Obtener el numero de la columna
     $num_col = intval(substr($nombre_col, -1));
     $num_col--;
 
-    if (isset($_POST[$nombre_col])) {
-        jugar($tablero, $i, $num_col, 0);
+    if ($hayGanador == "false") {
+        if (isset($_POST[$nombre_col])) {
+            jugar($tablero, $i, $num_col, 0);
+        }
+    
+        // Revisar si ganó el jugador
+        revisarGanador($tablero, 0, $hayGanador);
+
+        if ($hayGanador == "false") {
+            // Maquina
+            movimientoMaquina($tablero, $i);
+        
+            // Revisar si ganó la máquina
+            revisarGanador($tablero, 1, $hayGanador);
+        }
     }
-
-    // Revisar si ganó el jugador
-    revisarGanador($tablero, 0);
-
-    // Maquina
-    movimientoMaquina($tablero, $i);
-
-    // Revisar si ganó la máquina
-    revisarGanador($tablero, 1);
 }
 
 function jugar(&$tablero, $fila, $columna, $ficha) {
@@ -82,7 +88,7 @@ function movimientoMaquina(&$tablero, $fila) {
     }
 }
 
-function revisarGanador($tablero, $ficha) {
+function revisarGanador($tablero, $ficha, &$hayGanador) {
     $jugadores = array("El jugador", "La máquina");
     $ganador = false;
     // Se va a revisar el tablero desde la esquina inferior izquierda hasta
@@ -96,12 +102,14 @@ function revisarGanador($tablero, $ficha) {
                     if ($col <= 3) { // Se revisan diagonales hacia la derecha
                         if ($tablero[$fila - 1][$col + 1] == $ficha && $tablero[$fila - 2][$col + 2] == $ficha && $tablero[$fila - 3][$col + 3] == $ficha) {
                             $ganador = true;
+                            $hayGanador = "true";
                             break;
                         }
                     }    
                     if ($col >= 4) { // Se revisan diagonales a la izquierda
                         if ($tablero[$fila - 1][$col - 1] == $ficha && $tablero[$fila - 2][$col - 2] == $ficha && $tablero[$fila - 3][$col - 3] == $ficha) {
                             $ganador = true;
+                            $hayGanador = "true";
                             break;
                         }
                     }
@@ -109,6 +117,7 @@ function revisarGanador($tablero, $ficha) {
                     // Se revisan las verticales
                     if ($tablero[$fila - 1][$col] == $ficha && $tablero[$fila - 2][$col] == $ficha && $tablero[$fila - 3][$col] == $ficha) {
                         $ganador = true;
+                        $hayGanador = "true";
                         break;
                     }
                 }
@@ -116,6 +125,7 @@ function revisarGanador($tablero, $ficha) {
                 if ($col <= 3) { // Se revisan horizontales a la derecha
                     if ($tablero[$fila][$col + 1] == $ficha &&  $tablero[$fila][$col + 2] == $ficha && $tablero[$fila][$col + 3] == $ficha) {
                         $ganador = true;
+                        $hayGanador = "true";
                         break;
                     }
                 }
@@ -123,6 +133,7 @@ function revisarGanador($tablero, $ficha) {
                 if ($col >= 3) { // Se revisan horizontales a la izquierda
                     if ($tablero[$fila][$col - 1] == $ficha &&  $tablero[$fila][$col - 2] == $ficha && $tablero[$fila][$col - 3] == $ficha) {
                         $ganador = true;
+                        $hayGanador = "true";
                         break;
                     }
                 }
@@ -167,6 +178,7 @@ function revisarGanador($tablero, $ficha) {
             <!-- 6 filas, 7 columnas -->
             <form method="POST" action="juego.php">
                 <input name="tablero" type="hidden" value="<?php echo json_encode($tablero)?>">
+                <input name="estado" type="hidden" value="<?php echo $hayGanador?>">
                 <table class="table table-bordered">
                     <tr class="headers">
                         <th><button name="col1"><i class="fas fa-long-arrow-alt-down"></i></button></th>
